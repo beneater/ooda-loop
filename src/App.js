@@ -2,6 +2,7 @@ import React from "react";
 import {StyleSheet, css} from "aphrodite";
 
 import SegmentedControl from "./SegmentedControl.js";
+import Toggle from "./Toggle.js";
 import {F4, Mig21} from "./Planes.js";
 
 const BLUE = "#558cf4";
@@ -12,19 +13,22 @@ const styles = StyleSheet.create({
     backgroundColor: "#282c34",
     position: "relative",
     fontFamily: "sans-serif",
+    overflow: "hidden",
   },
   controls: {
     position: "absolute",
     bottom: 0,
     left: 0,
     display: "flex",
-    justifyContent: "space-around",
+    justifyContent: "center",
   },
   control: {
     textAlign: "center",
     color: "#ffffff",
     fontWeight: "bold",
     lineHeight: 2,
+    paddingLeft: "3em",
+    paddingRight: "3em",
   },
 });
 
@@ -42,6 +46,7 @@ const data = {
     assignedHeading: 0,
     speed: 0.3,
     turnRate: 0,
+    history: [],
   },
   mig: {
     x: Math.random() * 80 + 10,
@@ -50,6 +55,7 @@ const data = {
     assignedHeading: 0,
     speed: 0.3,
     turnRate: 0,
+    history: [],
   },
 };
 
@@ -101,6 +107,7 @@ class App extends React.Component {
       fontSize: 16,
       f4Ooda: OodaOptions[OodaOptions.length - 1],
       migOoda: OodaOptions[0],
+      showHistory: false,
     };
 
     this.raf = window.requestAnimationFrame(this.animationLoop);
@@ -173,6 +180,14 @@ class App extends React.Component {
     data.f4.y += sin(data.f4.heading) * data.f4.speed;
     data.mig.x += cos(data.mig.heading) * data.mig.speed;
     data.mig.y += sin(data.mig.heading) * data.mig.speed;
+
+    // Track path history
+    if (this.state.showHistory) {
+      data.f4.history.push([data.f4.x, data.f4.y]);
+      data.mig.history.push([data.mig.x, data.mig.y]);
+      data.f4.history = data.f4.history.slice(-1000);
+      data.mig.history = data.mig.history.slice(-1000);
+    }
 
     // Update the headings based on turn rates
     data.f4.heading = Math.round(
@@ -247,6 +262,44 @@ class App extends React.Component {
     );
     this.ctx.fill();
     this.ctx.stroke();
+
+    if (this.state.showHistory) {
+      // F-4 History
+      this.ctx.strokeStyle = BLUE + "66";
+      this.ctx.fillStyle = BLUE + "66";
+      this.ctx.lineWidth = 2;
+
+      this.ctx.beginPath();
+      this.ctx.moveTo(
+        ((data.f4.history[0][0] - data.offsetX) * width) / 100,
+        ((data.f4.history[0][1] - data.offsetY) * height) / 100,
+      );
+      data.f4.history.forEach((history) => {
+        this.ctx.lineTo(
+          ((history[0] - data.offsetX) * width) / 100,
+          ((history[1] - data.offsetY) * height) / 100,
+        );
+      });
+      this.ctx.stroke();
+
+      // MiG History
+      this.ctx.strokeStyle = RED + "66";
+      this.ctx.fillStyle = RED + "66";
+      this.ctx.lineWidth = 2;
+
+      this.ctx.beginPath();
+      this.ctx.moveTo(
+        ((data.mig.history[0][0] - data.offsetX) * width) / 100,
+        ((data.mig.history[0][1] - data.offsetY) * height) / 100,
+      );
+      data.mig.history.forEach((history) => {
+        this.ctx.lineTo(
+          ((history[0] - data.offsetX) * width) / 100,
+          ((history[1] - data.offsetY) * height) / 100,
+        );
+      });
+      this.ctx.stroke();
+    }
 
     // Update the position and angle of the planes
     // This hackily changes the SVGs' positions and transforms. Rerendering the
@@ -348,6 +401,18 @@ class App extends React.Component {
               options={OodaOptions.map((opt) => opt + "ms")}
               selected={OodaOptions.indexOf(this.state.f4Ooda)}
               onChange={this.changeF4Ooda}
+            />
+          </div>
+          <div className={css(styles.control)}>
+            <div>&nbsp;</div>
+            <Toggle
+              checked={this.state.showHistory}
+              onChange={() => {
+                this.setState({showHistory: !this.state.showHistory});
+                data.f4.history = [];
+                data.mig.history = [];
+              }}
+              caption="Trace paths"
             />
           </div>
           <div className={css(styles.control)}>
