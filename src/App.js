@@ -11,6 +11,7 @@ const styles = StyleSheet.create({
   app: {
     backgroundColor: "#282c34",
     position: "relative",
+    fontFamily: "sans-serif",
   },
   controls: {
     position: "absolute",
