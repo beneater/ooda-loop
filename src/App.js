@@ -76,8 +76,7 @@ const angleDiff = (angle1, angle2) => {
 
 // Adapted from
 // https://stackoverflow.com/questions/808826/draw-arrow-on-canvas-tag
-function canvasArrow(context, fromx, fromy, tox, toy) {
-  var headlen = 10; // length of head in pixels
+function canvasArrow(context, fromx, fromy, tox, toy, headlen) {
   var angle = Math.atan2(toy - fromy, tox - fromx);
   context.moveTo(fromx, fromy);
   context.lineTo(tox, toy);
@@ -226,39 +225,47 @@ class App extends React.Component {
       });
 
     // Draw the F-4's vector
+    const f4DisplayVector = atan2(
+      sin(data.f4.assignedHeading) * height,
+      cos(data.f4.assignedHeading) * width,
+    );
+
     this.ctx.strokeStyle = BLUE + "66";
     this.ctx.fillStyle = BLUE + "66";
     this.ctx.lineWidth = 3;
-
     this.ctx.beginPath();
     canvasArrow(
       this.ctx,
       ((data.f4.x - data.offsetX) * width) / 100,
       ((data.f4.y - data.offsetY) * height) / 100,
-      ((data.f4.x - data.offsetX + cos(data.f4.assignedHeading) * 5) * width) /
-        100,
-      ((data.f4.y - data.offsetY + sin(data.f4.assignedHeading) * 5) * height) /
-        100,
+      ((data.f4.x - data.offsetX) / 100) * width +
+        (cos(f4DisplayVector) * width) / 18,
+      ((data.f4.y - data.offsetY) / 100) * height +
+        (sin(f4DisplayVector) * width) / 18,
+      width / 150,
     );
     this.ctx.fill();
     this.ctx.stroke();
 
     // Draw the MiG's vector
+    const migDisplayVector = atan2(
+      sin(data.mig.assignedHeading) * height,
+      cos(data.mig.assignedHeading) * width,
+    );
+
     this.ctx.strokeStyle = RED + "66";
     this.ctx.fillStyle = RED + "66";
     this.ctx.lineWidth = 3;
-
     this.ctx.beginPath();
     canvasArrow(
       this.ctx,
       ((data.mig.x - data.offsetX) * width) / 100,
       ((data.mig.y - data.offsetY) * height) / 100,
-      ((data.mig.x - data.offsetX + cos(data.mig.assignedHeading) * 5) *
-        width) /
-        100,
-      ((data.mig.y - data.offsetY + sin(data.mig.assignedHeading) * 5) *
-        height) /
-        100,
+      ((data.mig.x - data.offsetX) / 100) * width +
+        (cos(migDisplayVector) * width) / 22,
+      ((data.mig.y - data.offsetY) / 100) * height +
+        (sin(migDisplayVector) * width) / 22,
+      width / 150,
     );
     this.ctx.fill();
     this.ctx.stroke();
