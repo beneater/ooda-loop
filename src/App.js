@@ -27,8 +27,8 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     fontWeight: "bold",
     lineHeight: 2,
-    paddingLeft: "3em",
-    paddingRight: "3em",
+    paddingLeft: "2em",
+    paddingRight: "2em",
   },
 });
 
@@ -96,6 +96,28 @@ function canvasArrow(context, fromx, fromy, tox, toy, headlen) {
   context.lineTo(tox, toy);
 }
 
+
+// From https://stackoverflow.com/questions/14573223
+function setCookie(name, value, days) {
+  var expires = "";
+  if (days) {
+    var date = new Date();
+    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+    expires = "; expires=" + date.toUTCString();
+  }
+  document.cookie = name + "=" + (value || "") + expires + "; path=/";
+}
+function getCookie(name) {
+  var nameEQ = name + "=";
+  var ca = document.cookie.split(";");
+  for (var i = 0; i < ca.length; i++) {
+    var c = ca[i];
+    while (c.charAt(0) === " ") c = c.substring(1, c.length);
+    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+  }
+  return null;
+}
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -104,9 +126,9 @@ class App extends React.Component {
       width: 0,
       height: 0,
       fontSize: 16,
-      f4Ooda: OodaOptions[OodaOptions.length - 1],
-      migOoda: OodaOptions[0],
-      showHistory: false,
+      f4Ooda: +getCookie("f4Ooda") || OodaOptions[OodaOptions.length - 1],
+      migOoda: +getCookie("migOoda") || OodaOptions[0],
+      showHistory: !!getCookie("oodaHistory"),
     };
 
     this.raf = window.requestAnimationFrame(this.animationLoop);
@@ -347,6 +369,7 @@ class App extends React.Component {
     this.setState({
       f4Ooda: oodaTime,
     });
+    setCookie("f4Ooda", oodaTime, 30);
 
     window.clearTimeout(this.f4Timer);
     this.f4Timer = window.setTimeout(this.updateF4, oodaTime);
@@ -358,6 +381,7 @@ class App extends React.Component {
     this.setState({
       migOoda: oodaTime,
     });
+    setCookie("migOoda", oodaTime, 30);
     window.clearTimeout(this.migTimer);
     this.migTimer = window.setTimeout(this.updateMig, oodaTime);
   };
@@ -410,18 +434,21 @@ class App extends React.Component {
               onChange={this.changeF4Ooda}
             />
           </div>
-          <div className={css(styles.control)}>
-            <div>&nbsp;</div>
-            <Toggle
-              checked={this.state.showHistory}
-              onChange={() => {
-                this.setState({showHistory: !this.state.showHistory});
-                data.f4.history = [];
-                data.mig.history = [];
-              }}
-              caption="Trace paths"
-            />
-          </div>
+          {window.location.search === "?v" || (
+            <div className={css(styles.control)}>
+              <div>&nbsp;</div>
+              <Toggle
+                checked={this.state.showHistory}
+                onChange={() => {
+                  setCookie("oodaHistory", !this.state.showHistory, 30);
+                  this.setState({showHistory: !this.state.showHistory});
+                  data.f4.history = [];
+                  data.mig.history = [];
+                }}
+                caption="Trace paths"
+              />
+            </div>
+          )}
           <div className={css(styles.control)}>
             <div style={{color: RED}}>MiG-21 OODA loop time</div>
             <SegmentedControl
