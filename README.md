@@ -1,10 +1,50 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# OODA loop demonstration
 
-## Available Scripts
+Copyright 2019 Ben Eater
+
+This code is [MIT licensed](http://en.wikipedia.org/wiki/MIT_License).
+
+## What is this?
+
+This is a simple demonstration of an "observe, orient, decide, act (OODA) loop"
+that I built for Destin to use in this Smarter Every Day video:
+
+[<img src=https://img.youtube.com/vi/MUiYglgGbos/maxresdefault.jpg width=360/>](https://www.youtube.com/watch?v=MUiYglgGbos)
+
+This simulation is running on [my website](https://eater.net/ooda-loop) if you’d
+like to check it out.
+
+## What does the simulation show?
+
+It’s an extremely simple model… Each plane has the singular goal of flying
+towards the other plane. That’s it. The only difference between the planes is
+the OODA interval, otherwise everything else—speed, turn rate, etc—is the same.
+
+Each interval, the plane will determine the bearing direct to the other plane.
+That bearing then becomes its assigned heading (shown by the vector) until the
+next interval. Meanwhile it always blindly turns towards and flies its assigned
+heading.
+
+The planes start in random positions, but the simplicity of the algorithm means
+they quickly fall into predictable patterns. But if the difference in OODA loop
+times is significant between the two planes, the pattern it falls into results
+in one of them “winning”—that is, maintaining a better tactical position.
+
+## Technical
+
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Not because React is a good choice for building something game-like—it's not—but
+because it was a quick-and-easy way to set up a reasonably-configured build
+environment. Consequently, I wouldn't recommend using this project as an
+example of how to use React, or how to write a game. Or if you do, at least be
+aware that there are two separate design patterns inelegantly woven together
+here.
+
+### Available scripts
 
 In the project directory, you can run:
 
-### `npm start`
+#### `yarn start`
 
 Runs the app in the development mode.<br>
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
@@ -12,12 +52,7 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 The page will reload if you make edits.<br>
 You will also see any lint errors in the console.
 
-### `npm test`
-
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
+#### `yarn build`
 
 Builds the app for production to the `build` folder.<br>
 It correctly bundles React in production mode and optimizes the build for the best performance.
@@ -26,43 +61,3 @@ The build is minified and the filenames include the hashes.<br>
 Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
