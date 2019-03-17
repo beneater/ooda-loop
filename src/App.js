@@ -141,6 +141,13 @@ class App extends React.Component {
     setTimeout(this._onWindowResize, 0);
   }
 
+  componentWillUnmount() {
+    window.removeEventListener("resize", this._onWindowResize, false);
+    window.cancelAnimationFrame(this.raf);
+    window.clearTimeout(this.migTimer);
+    window.clearTimeout(this.f4Timer);
+  }
+
   _onWindowResize = () => {
     const w = Math.max(
       document.documentElement.clientWidth,
